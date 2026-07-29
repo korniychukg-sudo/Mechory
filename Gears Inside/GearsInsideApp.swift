@@ -8,6 +8,14 @@ struct GearsInsideApp: App {
 
     @StateObject private var store = CogStore()
 
+    init() {
+        #if DEBUG
+        if ProcessInfo.processInfo.environment["COG_SELFTEST"] == "1" {
+            benchSolverSelfTest()
+        }
+        #endif
+    }
+
     var body: some Scene {
         WindowGroup {
             Group {

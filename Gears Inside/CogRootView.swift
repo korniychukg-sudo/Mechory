@@ -1,14 +1,22 @@
 import SwiftUI
 
+/// Shared tab selection so feature cards can jump straight to a tab.
+final class CogTabRouter: ObservableObject {
+    @Published var tab = 0
+}
+
 struct CogRootView: View {
     @EnvironmentObject var store: CogStore
-    @State private var selectedTab = 0
+    @StateObject private var router = CogTabRouter()
     @State private var badgeToast: CogBadge? = nil
 
     #if DEBUG
     private var debugMech: MechanismSpec? {
         guard let id = ProcessInfo.processInfo.environment["COG_MECH"] else { return nil }
         return MechLibrary.byID(id)
+    }
+    private var debugScreen: String? {
+        ProcessInfo.processInfo.environment["COG_VIEW"]
     }
     #endif
 
@@ -17,6 +25,18 @@ struct CogRootView: View {
         if let mech = debugMech {
             NavigationView { MechanismView(spec: mech).environmentObject(store) }
                 .navigationViewStyle(StackNavigationViewStyle())
+        } else if let screen = debugScreen {
+            NavigationView {
+                Group {
+                    switch screen {
+                    case "repair": RepairListView().environmentObject(store)
+                    case "repairdetail": RepairDetailView(guide: CogRepairContent.all[0]).environmentObject(store)
+                    case "guides": GuidesListView().environmentObject(store)
+                    default: GlossaryView()
+                    }
+                }
+            }
+            .navigationViewStyle(StackNavigationViewStyle())
         } else {
             mainBody
         }
@@ -29,18 +49,22 @@ struct CogRootView: View {
         ZStack(alignment: .bottom) {
             VStack(spacing: 0) {
                 Group {
-                    switch selectedTab {
+                    switch router.tab {
                     case 0:
-                        NavigationView { WorkshopView().environmentObject(store) }
-                            .navigationViewStyle(StackNavigationViewStyle())
+                        NavigationView {
+                            WorkshopView()
+                                .environmentObject(store)
+                                .environmentObject(router)
+                        }
+                        .navigationViewStyle(StackNavigationViewStyle())
                     case 1:
                         NavigationView { LibraryView().environmentObject(store) }
                             .navigationViewStyle(StackNavigationViewStyle())
                     case 2:
-                        NavigationView { LearnView().environmentObject(store) }
+                        NavigationView { BenchView().environmentObject(store) }
                             .navigationViewStyle(StackNavigationViewStyle())
                     case 3:
-                        NavigationView { CogProgressView().environmentObject(store) }
+                        NavigationView { ModelHallView().environmentObject(store) }
                             .navigationViewStyle(StackNavigationViewStyle())
                     default:
                         NavigationView { CogMoreView().environmentObject(store) }
@@ -66,7 +90,7 @@ struct CogRootView: View {
             #if DEBUG
             if let tab = ProcessInfo.processInfo.environment["COG_TAB"],
                let idx = Int(tab), (0...4).contains(idx) {
-                selectedTab = idx
+                router.tab = idx
             }
             #endif
         }
@@ -122,8 +146,8 @@ struct CogRootView: View {
         HStack(spacing: 0) {
             tabButton(index: 0, label: "Workshop", kind: .workshop)
             tabButton(index: 1, label: "Library", kind: .library)
-            tabButton(index: 2, label: "Learn", kind: .learn)
-            tabButton(index: 3, label: "Progress", kind: .progress)
+            tabButton(index: 2, label: "Bench", kind: .bench)
+            tabButton(index: 3, label: "Hall", kind: .progress)
             tabButton(index: 4, label: "More", kind: .more)
         }
         .padding(.top, 9)
@@ -136,10 +160,10 @@ struct CogRootView: View {
     }
 
     private func tabButton(index: Int, label: String, kind: CogTabIcon.Kind) -> some View {
-        let active = selectedTab == index
+        let active = router.tab == index
         return Button {
-            if selectedTab != index {
-                selectedTab = index
+            if router.tab != index {
+                router.tab = index
                 CogHaptics.tick()
             }
         } label: {

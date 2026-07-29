@@ -19,6 +19,12 @@ struct CogProgressState: Codable {
     var dailyOpenDays: Set<String> = []
     var lastOpenedMechID: String? = nil
     var earnedBadgeIDs: Set<String> = []
+    var challengesDone: Set<String> = []
+    var jamsCaused: Int = 0
+    var repairsRead: Set<String> = []
+    var perfectDays: Set<String> = []
+    var benchLayout: [BenchPlacement] = []
+    var dailyGoalLog: [String: Set<String>] = [:]
 
     init() {}
 
@@ -41,6 +47,12 @@ struct CogProgressState: Codable {
         dailyOpenDays = (try? c.decodeIfPresent(Set<String>.self, forKey: .dailyOpenDays)) ?? []
         lastOpenedMechID = try? c.decodeIfPresent(String.self, forKey: .lastOpenedMechID)
         earnedBadgeIDs = (try? c.decodeIfPresent(Set<String>.self, forKey: .earnedBadgeIDs)) ?? []
+        challengesDone = (try? c.decodeIfPresent(Set<String>.self, forKey: .challengesDone)) ?? []
+        jamsCaused = (try? c.decodeIfPresent(Int.self, forKey: .jamsCaused)) ?? 0
+        repairsRead = (try? c.decodeIfPresent(Set<String>.self, forKey: .repairsRead)) ?? []
+        perfectDays = (try? c.decodeIfPresent(Set<String>.self, forKey: .perfectDays)) ?? []
+        benchLayout = (try? c.decodeIfPresent([BenchPlacement].self, forKey: .benchLayout)) ?? []
+        dailyGoalLog = (try? c.decodeIfPresent([String: Set<String>].self, forKey: .dailyGoalLog)) ?? [:]
     }
 
     var stagesDoneCount: Int {
@@ -61,6 +73,9 @@ struct CogProgressState: Codable {
         total += quizPerfects * 15
         total += guidesRead.count * 10
         total += visitDays.count * 5
+        total += challengesDone.count * 15
+        total += repairsRead.count * 8
+        total += perfectDays.count * 10
         return total
     }
 
@@ -130,6 +145,17 @@ final class CogStore: ObservableObject {
             }
         }
         s.dailyOpenDays = ["2026-07-25", "2026-07-26", "2026-07-27"]
+        // A meshed train on the free-play bench: motor 12t -> 12t -> 16t -> 8t.
+        s.benchLayout = [
+            BenchPlacement(col: 4, row: 1, size: "medium"),
+            BenchPlacement(col: 6, row: 4, size: "large"),
+            BenchPlacement(col: 6, row: 7, size: "small"),
+        ]
+        s.challengesDone = ["c01", "c02", "c04"]
+        s.jamsCaused = 2
+        s.repairsRead = ["fix-zipper", "fix-lock"]
+        s.perfectDays = ["2026-07-27", "2026-07-28"]
+        s.dailyGoalLog[Self.dayKey(Date())] = ["daily", "quiz"]
         state = s
         for badge in CogBadges.all where badge.check(state) {
             state.earnedBadgeIDs.insert(badge.id)
@@ -191,6 +217,7 @@ final class CogStore: ObservableObject {
             $0.lastOpenedMechID = id
             if isDaily { $0.dailyOpenDays.insert(Self.dayKey(Date())) }
         }
+        if isDaily { dailyGoal("daily") }
     }
 
     /// Returns true when this stage completion finished the whole mechanism.
@@ -228,12 +255,59 @@ final class CogStore: ObservableObject {
             $0.quizBest = max($0.quizBest, correct)
             if correct == total { $0.quizPerfects += 1 }
         }
+        dailyGoal("quiz")
     }
 
     func guideRead(_ id: String) {
         if !state.guidesRead.contains(id) {
             mutate { $0.guidesRead.insert(id) }
         }
+    }
+
+    // MARK: v2 events
+
+    func challengeSolved(_ id: String) {
+        guard !state.challengesDone.contains(id) else { return }
+        mutate { $0.challengesDone.insert(id) }
+        dailyGoal("bench")
+    }
+
+    func jamHappened() {
+        mutate { $0.jamsCaused += 1 }
+    }
+
+    func repairRead(_ id: String) {
+        if !state.repairsRead.contains(id) {
+            mutate { $0.repairsRead.insert(id) }
+        }
+    }
+
+    func saveBenchLayout(_ layout: [BenchPlacement]) {
+        mutate { $0.benchLayout = layout }
+    }
+
+    /// Daily goal keys: "daily" (opened the daily mechanism), "bench"
+    /// (solved a challenge), "quiz" (finished a round).
+    func dailyGoal(_ key: String) {
+        let day = Self.dayKey(Date())
+        var set = state.dailyGoalLog[day] ?? []
+        guard !set.contains(key) else { return }
+        set.insert(key)
+        mutate { s in
+            s.dailyGoalLog[day] = set
+            if set.count >= 3 { s.perfectDays.insert(day) }
+            // Keep the log bounded: only the last 60 day entries matter.
+            if s.dailyGoalLog.count > 80 {
+                let sorted = s.dailyGoalLog.keys.sorted()
+                for old in sorted.prefix(s.dailyGoalLog.count - 60) {
+                    s.dailyGoalLog.removeValue(forKey: old)
+                }
+            }
+        }
+    }
+
+    var todayGoals: Set<String> {
+        state.dailyGoalLog[Self.dayKey(Date())] ?? []
     }
 
     func resetAll() {

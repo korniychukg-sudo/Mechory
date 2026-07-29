@@ -129,6 +129,36 @@ struct CogArtImage: View {
     }
 }
 
+/// Staggered entrance: soft fade + rise, delayed by position.
+struct CogAppear: ViewModifier {
+    let index: Int
+    @State private var shown = false
+
+    func body(content: Content) -> some View {
+        content
+            .opacity(shown ? 1 : 0)
+            .offset(y: shown ? 0 : 10)
+            .onAppear {
+                withAnimation(.easeOut(duration: 0.4).delay(Double(index) * 0.07)) {
+                    shown = true
+                }
+            }
+    }
+}
+
+/// Pressed-scale feedback for cards.
+struct CogPressStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.975 : 1)
+            .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
+    }
+}
+
+extension View {
+    func cogAppear(_ index: Int) -> some View { modifier(CogAppear(index: index)) }
+}
+
 /// Custom drag slider — no system components anywhere in the app.
 struct CogSlider: View {
     @Binding var value: CGFloat        // 0...1

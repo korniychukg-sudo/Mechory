@@ -1,84 +1,47 @@
 import SwiftUI
 
-struct LearnView: View {
+// MARK: - Field guides list (pushed from the Library's Reading Nook)
+
+struct GuidesListView: View {
     @EnvironmentObject var store: CogStore
-    @State private var glossarySearch = ""
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                CogSectionHeader(title: "The Reading Nook",
-                                 subtitle: "Field guides, a quiz and the workshop dictionary.")
-                    .padding(.top, 12)
-                quizCard
-                guidesSection
-                glossarySection
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Text("Long reads from the workshop shelf.")
+                        .font(CogTheme.body(13))
+                        .foregroundColor(CogTheme.inkSoft)
+                    Spacer()
+                    Text("\(store.state.guidesRead.count)/\(CogLearnContent.guides.count) read")
+                        .font(CogTheme.mono(12))
+                        .foregroundColor(CogTheme.inkSoft)
+                }
+                .padding(.top, 8)
+
+                VStack(spacing: 10) {
+                    ForEach(Array(CogLearnContent.guides.enumerated()), id: \.element.id) { idx, guide in
+                        NavigationLink {
+                            GuideDetailView(guide: guide).environmentObject(store)
+                        } label: {
+                            guideRow(guide)
+                        }
+                        .buttonStyle(CogPressStyle())
+                        .cogAppear(idx)
+                    }
+                }
             }
             .padding(.horizontal, 18)
             .padding(.bottom, 28)
             .cogColumn(720)
         }
         .background(CogTheme.paper.ignoresSafeArea())
-        .navigationBarHidden(true)
-    }
-
-    private var quizCard: some View {
-        NavigationLink {
-            QuizView().environmentObject(store)
-        } label: {
-            ZStack(alignment: .bottomLeading) {
-                CogArtImage(name: "quiz_banner", corner: 20)
-                    .frame(height: 130)
-                    .frame(maxWidth: .infinity)
-                    .clipped()
-                LinearGradient(colors: [Color.clear, CogTheme.ink.opacity(0.6)],
-                               startPoint: .center, endPoint: .bottom)
-                    .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                HStack(alignment: .bottom) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Workshop Quiz")
-                            .font(CogTheme.title(20))
-                            .foregroundColor(.white)
-                        Text("Ten questions from the bench")
-                            .font(CogTheme.body(12.5))
-                            .foregroundColor(.white.opacity(0.85))
-                    }
-                    Spacer(minLength: 8)
-                    if store.state.quizBest > 0 {
-                        Text("Best \(store.state.quizBest)/10")
-                            .font(CogTheme.mono(12))
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 9)
-                            .padding(.vertical, 4)
-                            .background(Capsule().fill(CogTheme.brass.opacity(0.9)))
-                    }
-                }
-                .padding(14)
-            }
-        }
-        .buttonStyle(.plain)
-    }
-
-    private var guidesSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack {
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
                 Text("Field Guides")
-                    .font(CogTheme.title(18))
+                    .font(CogTheme.title(17))
                     .foregroundColor(CogTheme.ink)
-                Spacer()
-                Text("\(store.state.guidesRead.count)/\(CogLearnContent.guides.count) read")
-                    .font(CogTheme.mono(12))
-                    .foregroundColor(CogTheme.inkSoft)
-            }
-            VStack(spacing: 10) {
-                ForEach(CogLearnContent.guides) { guide in
-                    NavigationLink {
-                        GuideDetailView(guide: guide).environmentObject(store)
-                    } label: {
-                        guideRow(guide)
-                    }
-                    .buttonStyle(.plain)
-                }
             }
         }
     }
@@ -117,47 +80,64 @@ struct LearnView: View {
         }
         .cogCard(padding: 12, corner: 16)
     }
+}
 
-    private var glossarySection: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("Workshop Dictionary")
-                .font(CogTheme.title(18))
-                .foregroundColor(CogTheme.ink)
+// MARK: - Glossary (pushed from the Library's Reading Nook)
 
-            TextField("Search terms", text: $glossarySearch)
-                .font(CogTheme.body(14))
-                .padding(.horizontal, 14)
-                .padding(.vertical, 10)
-                .background(RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(CogTheme.card)
-                    .shadow(color: CogTheme.shadow, radius: 3, y: 1))
-                .disableAutocorrection(true)
+struct GlossaryView: View {
+    @State private var search = ""
 
-            let filtered = CogLearnContent.glossary.filter {
-                glossarySearch.isEmpty
-                    || $0.term.localizedCaseInsensitiveContains(glossarySearch)
-                    || $0.definition.localizedCaseInsensitiveContains(glossarySearch)
-            }
-            if filtered.isEmpty {
-                Text("No matching terms — try another word.")
-                    .font(CogTheme.body(13))
-                    .foregroundColor(CogTheme.inkSoft)
-                    .padding(.vertical, 8)
-            }
-            VStack(spacing: 8) {
-                ForEach(filtered) { term in
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text(term.term)
-                            .font(CogTheme.body(14, weight: .bold))
-                            .foregroundColor(CogTheme.ink)
-                        Text(term.definition)
-                            .font(CogTheme.body(12.5))
-                            .foregroundColor(CogTheme.inkSoft)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .cogCard(padding: 12, corner: 14)
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 12) {
+                TextField("Search terms", text: $search)
+                    .font(CogTheme.body(14))
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 10)
+                    .background(RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .fill(CogTheme.card)
+                        .shadow(color: CogTheme.shadow, radius: 3, y: 1))
+                    .disableAutocorrection(true)
+                    .padding(.top, 8)
+
+                let filtered = CogLearnContent.glossary.filter {
+                    search.isEmpty
+                        || $0.term.localizedCaseInsensitiveContains(search)
+                        || $0.definition.localizedCaseInsensitiveContains(search)
                 }
+                if filtered.isEmpty {
+                    Text("No matching terms - try another word.")
+                        .font(CogTheme.body(13))
+                        .foregroundColor(CogTheme.inkSoft)
+                        .padding(.vertical, 8)
+                }
+                VStack(spacing: 8) {
+                    ForEach(filtered) { term in
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(term.term)
+                                .font(CogTheme.body(14, weight: .bold))
+                                .foregroundColor(CogTheme.ink)
+                            Text(term.definition)
+                                .font(CogTheme.body(12.5))
+                                .foregroundColor(CogTheme.inkSoft)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .cogCard(padding: 12, corner: 14)
+                    }
+                }
+            }
+            .padding(.horizontal, 18)
+            .padding(.bottom, 28)
+            .cogColumn(720)
+        }
+        .background(CogTheme.paper.ignoresSafeArea())
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("Workshop Dictionary")
+                    .font(CogTheme.title(17))
+                    .foregroundColor(CogTheme.ink)
             }
         }
     }

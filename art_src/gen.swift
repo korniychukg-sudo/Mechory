@@ -581,11 +581,22 @@ func motif(_ c: CGContext, id: String, w: Int, h: Int) {
 
 // MARK: - Image builders
 
+/// Motifs are authored in top-down (screen) coordinates; CG is bottom-up, so
+/// draw them inside a vertical flip to keep zips zipping downward and pen
+/// tips pointing at the page.
+func withMotifFlip(_ c: CGContext, _ h: Int, _ body: () -> Void) {
+    c.saveGState()
+    c.translateBy(x: 0, y: CGFloat(h))
+    c.scaleBy(x: 1, y: -1)
+    body()
+    c.restoreGState()
+}
+
 func poster(_ id: String, _ title: String, _ subtitle: String, _ path: String, seed: UInt64) {
     let w = 1440, h = 1080
     let c = ctx(w, h)
     background(c, w, h, seed: seed)
-    motif(c, id: id, w: w, h: h)
+    withMotifFlip(c, h) { motif(c, id: id, w: w, h: h) }
     cartouche(c, w, h, title: title, subtitle: subtitle)
     grain(c, w, h, seed: seed, alpha: 0.06)
     save(c, path)
@@ -606,7 +617,7 @@ func banner(_ id: String, _ path: String, seed: UInt64, motifs: [String]) {
         c.translateBy(x: W / 2, y: H / 2)
         c.scaleBy(x: 0.42, y: 0.42)
         c.translateBy(x: -W / 2, y: -H * 0.58)
-        motif(c, id: m, w: w, h: h)
+        withMotifFlip(c, h) { motif(c, id: m, w: w, h: h) }
         c.restoreGState()
         c.restoreGState()
     }
@@ -626,12 +637,52 @@ func cover(_ motifID: String, _ path: String, seed: UInt64, tint: CGColor? = nil
     c.translateBy(x: CGFloat(w) / 2, y: CGFloat(h) / 2)
     c.scaleBy(x: 0.8, y: 0.8)
     c.translateBy(x: -CGFloat(w) / 2, y: -CGFloat(h) * 0.56)
-    motif(c, id: motifID, w: w, h: h)
+    withMotifFlip(c, h) { motif(c, id: motifID, w: w, h: h) }
     c.restoreGState()
     // Decorative border.
     c.setStrokeColor(brass)
     c.setLineWidth(5)
     c.stroke(CGRect(x: 26, y: 26, width: w - 52, height: h - 52))
+    grain(c, w, h, seed: seed, alpha: 0.06)
+    save(c, path)
+}
+
+/// Repair Corner cover: mechanism motif with a workshop-red border and a
+/// bold wrench accent in the corner.
+func repairCover(_ motifID: String, _ path: String, seed: UInt64) {
+    let w = 1280, h = 768
+    let c = ctx(w, h)
+    background(c, w, h, seed: seed)
+    c.saveGState()
+    c.translateBy(x: CGFloat(w) / 2, y: CGFloat(h) / 2)
+    c.scaleBy(x: 0.72, y: 0.72)
+    c.translateBy(x: -CGFloat(w) / 2, y: -CGFloat(h) * 0.56)
+    withMotifFlip(c, h) { motif(c, id: motifID, w: w, h: h) }
+    c.restoreGState()
+    // Wrench accent, bottom-right (drawn in CG coords: y up).
+    let bx = Double(w) * 0.85, by = Double(h) * 0.22
+    c.saveGState()
+    c.translateBy(x: bx, y: by)
+    c.rotate(by: -0.6)
+    // Handle.
+    let handle = CGPath(roundedRect: CGRect(x: -14, y: -95, width: 28, height: 130),
+                        cornerWidth: 14, cornerHeight: 14, transform: nil)
+    c.setFillColor(sealCol)
+    c.addPath(handle); c.fillPath()
+    c.setStrokeColor(inkLine); c.setLineWidth(4)
+    c.addPath(handle); c.strokePath()
+    // Open jaw.
+    c.setFillColor(sealCol)
+    c.fillEllipse(in: CGRect(x: -30, y: 20, width: 60, height: 60))
+    c.setFillColor(navyLo)
+    c.fill(CGRect(x: -12, y: 42, width: 24, height: 44))
+    c.setStrokeColor(inkLine); c.setLineWidth(4)
+    c.strokeEllipse(in: CGRect(x: -30, y: 20, width: 60, height: 60))
+    c.restoreGState()
+    // Red toolbox border.
+    c.setStrokeColor(sealCol)
+    c.setLineWidth(7)
+    c.stroke(CGRect(x: 24, y: 24, width: w - 48, height: h - 48))
     grain(c, w, h, seed: seed, alpha: 0.06)
     save(c, path)
 }
@@ -804,6 +855,18 @@ onboard(1, "\(outDir)/onboard_1.png")
 onboard(2, "\(outDir)/onboard_2.png")
 onboard(3, "\(outDir)/onboard_3.png")
 print("onboarding done")
+
+let repairs: [(String, String)] = [
+    ("repair_zipper", "zipper"), ("repair_zipper2", "zipper"),
+    ("repair_hinge", "camfollower"), ("repair_lock", "pinlock"),
+    ("repair_chain", "geartrain"), ("repair_clock", "escapement"),
+    ("repair_handle", "rackpinion"), ("repair_pen", "clickpen"),
+    ("repair_cords", "blocktackle"), ("repair_overwind", "musicbox"),
+]
+for (i, item) in repairs.enumerated() {
+    repairCover(item.1, "\(outDir)/\(item.0).png", seed: UInt64(500 + i))
+}
+print("repair covers done")
 
 appIcon("\(iconDir)/AppIcon-1024.png")
 print("icon done")

@@ -233,7 +233,7 @@ struct CogTabIcon: View {
     let kind: Kind
     let active: Bool
 
-    enum Kind { case workshop, library, learn, progress, more }
+    enum Kind { case workshop, library, learn, progress, more, bench }
 
     var body: some View {
         let color = active ? CogTheme.brass : CogTheme.inkSoft.opacity(0.7)
@@ -249,6 +249,8 @@ struct CogTabIcon: View {
                 MedalGlyph().fill(color)
             case .more:
                 DotsGlyph().fill(color)
+            case .bench:
+                WrenchGlyph().fill(color)
             }
         }
         .frame(width: 25, height: 25)

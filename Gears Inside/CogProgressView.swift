@@ -1,30 +1,11 @@
 import SwiftUI
 
-struct CogProgressView: View {
+// Reusable progress components composed by the Model Hall.
+
+struct CogRankCard: View {
     @EnvironmentObject var store: CogStore
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                CogSectionHeader(title: "Your Bench Record",
-                                 subtitle: "Ranks, awards and everything you've opened up.")
-                    .padding(.top, 12)
-                rankCard
-                statsGrid
-                calendarCard
-                badgesSection
-            }
-            .padding(.horizontal, 18)
-            .padding(.bottom, 28)
-            .cogColumn(720)
-        }
-        .background(CogTheme.paper.ignoresSafeArea())
-        .navigationBarHidden(true)
-    }
-
-    // MARK: Rank
-
-    private var rankCard: some View {
         let xp = store.state.xp
         let current = CogRanks.rank(for: xp)
         let next = CogRanks.next(after: xp)
@@ -72,18 +53,20 @@ struct CogProgressView: View {
         }
         .cogCard()
     }
+}
 
-    // MARK: Stats
+struct CogStatsGrid: View {
+    @EnvironmentObject var store: CogStore
 
-    private var statsGrid: some View {
+    var body: some View {
         let s = store.state
         let cells: [(String, String)] = [
             ("\(s.understoodIDs.count)/\(MechLibrary.all.count)", "mechanisms mastered"),
-            ("\(s.stagesDoneCount)", "steps completed"),
+            ("\(s.challengesDone.count)/\(BenchChallenge.all.count)", "bench challenges"),
             ("\(s.streak)", "day streak"),
             ("\(s.quizBest)/10", "best quiz"),
             ("\(s.crankCycles)", "hand-cranked cycles"),
-            ("\(s.partTaps)", "parts inspected"),
+            ("\(s.repairsRead.count)/10", "fixes learned"),
         ]
         let columns = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
         return LazyVGrid(columns: columns, spacing: 10) {
@@ -110,13 +93,15 @@ struct CogProgressView: View {
             }
         }
     }
+}
 
-    // MARK: Visit calendar (last 5 weeks)
+struct CogVisitCalendar: View {
+    @EnvironmentObject var store: CogStore
 
-    private var calendarCard: some View {
+    var body: some View {
         let cal = Calendar.current
         let today = cal.startOfDay(for: Date())
-        let weekday = cal.component(.weekday, from: today) // 1 = Sunday
+        let weekday = cal.component(.weekday, from: today)
         let daysSinceMonday = (weekday + 5) % 7
         let thisMonday = cal.date(byAdding: .day, value: -daysSinceMonday, to: today) ?? today
         let weeks: [[Date]] = (0..<5).reversed().map { w in
@@ -130,7 +115,7 @@ struct CogProgressView: View {
                 .foregroundColor(CogTheme.ink)
             VStack(spacing: 6) {
                 HStack(spacing: 6) {
-                    ForEach(["M", "T", "W", "T", "F", "S", "S"], id: \.self) { day in
+                    ForEach(Array(["M", "T", "W", "T", "F", "S", "S"].enumerated()), id: \.offset) { _, day in
                         Text(day)
                             .font(CogTheme.mono(10))
                             .foregroundColor(CogTheme.inkSoft)
@@ -142,11 +127,13 @@ struct CogProgressView: View {
                         ForEach(Array(week.enumerated()), id: \.offset) { _, day in
                             let key = CogStore.dayKey(day)
                             let visited = store.state.visitDays.contains(key)
+                            let perfect = store.state.perfectDays.contains(key)
                             let isFuture = day > today
                             let isToday = cal.isDate(day, inSameDayAs: today)
                             RoundedRectangle(cornerRadius: 5, style: .continuous)
-                                .fill(visited ? CogTheme.brass :
-                                        (isFuture ? Color.clear : CogTheme.paperDeep))
+                                .fill(perfect ? CogTheme.gold :
+                                        (visited ? CogTheme.brass :
+                                            (isFuture ? Color.clear : CogTheme.paperDeep)))
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 5, style: .continuous)
                                         .stroke(isToday ? CogTheme.teal : Color.clear, lineWidth: 1.6))
@@ -154,14 +141,31 @@ struct CogProgressView: View {
                         }
                     }
                 }
+                HStack(spacing: 12) {
+                    legendDot(CogTheme.brass, "visited")
+                    legendDot(CogTheme.gold, "perfect day")
+                    Spacer()
+                }
+                .padding(.top, 2)
             }
         }
         .cogCard()
     }
 
-    // MARK: Badges
+    private func legendDot(_ color: Color, _ label: String) -> some View {
+        HStack(spacing: 5) {
+            RoundedRectangle(cornerRadius: 3).fill(color).frame(width: 12, height: 12)
+            Text(label)
+                .font(CogTheme.body(10.5))
+                .foregroundColor(CogTheme.inkSoft)
+        }
+    }
+}
 
-    private var badgesSection: some View {
+struct CogBadgeGrid: View {
+    @EnvironmentObject var store: CogStore
+
+    var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Text("Awards")

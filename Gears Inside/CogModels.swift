@@ -49,6 +49,8 @@ enum MechWing: String, CaseIterable, Identifiable, Codable {
 struct MechRenderOptions {
     var explode: CGFloat = 0
     var highlight: Set<String> = []
+    /// Miniature renders (Model Hall, home scene) skip text callouts.
+    var hideCallouts: Bool = false
 
     func alpha(for partID: String) -> CGFloat {
         guard !highlight.isEmpty else { return 1 }
@@ -95,6 +97,14 @@ struct MechanismSpec: Identifiable {
     func part(_ id: String) -> MechPartSpec? {
         parts.first { $0.id == id }
     }
+}
+
+// MARK: - Bench (gear playground)
+
+struct BenchPlacement: Codable, Equatable {
+    let col: Int
+    let row: Int
+    let size: String
 }
 
 // MARK: - Learn content
@@ -186,5 +196,13 @@ enum CogBadges {
         CogBadge(id: "stages-32", name: "Half the Secrets", detail: "Complete 32 walkthrough steps.") { $0.stagesDoneCount >= 32 },
         CogBadge(id: "daily-5", name: "Day by Day", detail: "Open the Mechanism of the Day on 5 days.") { $0.dailyOpenDays.count >= 5 },
         CogBadge(id: "parts-40", name: "Parts Spotter", detail: "Inspect 40 labelled parts up close.") { $0.partTaps >= 40 },
+        CogBadge(id: "bench-first", name: "First Contraption", detail: "Solve your first Test Bench challenge.") { $0.challengesDone.count >= 1 },
+        CogBadge(id: "bench-6", name: "Rigger", detail: "Solve 6 Test Bench challenges.") { $0.challengesDone.count >= 6 },
+        CogBadge(id: "bench-12", name: "Master Rigger", detail: "Solve every Test Bench challenge.") { $0.challengesDone.count >= 12 },
+        CogBadge(id: "jam-1", name: "Beautiful Jam", detail: "Lock a gear train solid. Happens to the best.") { $0.jamsCaused >= 1 },
+        CogBadge(id: "repair-first", name: "Handy", detail: "Read your first fix-it guide.") { $0.repairsRead.count >= 1 },
+        CogBadge(id: "repair-all", name: "Fixer of Things", detail: "Read all 10 fix-it guides.") { $0.repairsRead.count >= 10 },
+        CogBadge(id: "day-perfect-1", name: "Good Day", detail: "Complete all three bench goals in one day.") { $0.perfectDays.count >= 1 },
+        CogBadge(id: "day-perfect-7", name: "Golden Week", detail: "Collect 7 perfect workshop days.") { $0.perfectDays.count >= 7 },
     ]
 }

@@ -11,8 +11,10 @@ struct LibraryView: View {
                 CogSectionHeader(title: "Mechanism Library",
                                  subtitle: "Sixteen movements, drawn to be cranked, split apart and understood.")
                     .padding(.top, 12)
-                ForEach(MechWing.allCases) { wing in
-                    wingSection(wing)
+                    .cogAppear(0)
+                readingNook.cogAppear(1)
+                ForEach(Array(MechWing.allCases.enumerated()), id: \.element.id) { idx, wing in
+                    wingSection(wing).cogAppear(idx + 2)
                 }
             }
             .padding(.horizontal, 18)
@@ -21,6 +23,91 @@ struct LibraryView: View {
         }
         .background(CogTheme.paper.ignoresSafeArea())
         .navigationBarHidden(true)
+    }
+
+    // MARK: Reading Nook
+
+    private var readingNook: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 8) {
+                RoundedRectangle(cornerRadius: 2).fill(CogTheme.brass).frame(width: 4, height: 18)
+                Text("Reading Nook")
+                    .font(CogTheme.title(18))
+                    .foregroundColor(CogTheme.ink)
+                Spacer()
+            }
+            let columns = [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)]
+            LazyVGrid(columns: columns, spacing: 10) {
+                NavigationLink {
+                    GuidesListView().environmentObject(store)
+                } label: {
+                    nookCard(title: "Field Guides",
+                             line: "\(store.state.guidesRead.count)/\(CogLearnContent.guides.count) read",
+                             tint: CogTheme.brass) {
+                        AnyView(BookGlyph().fill(CogTheme.brass).frame(width: 20, height: 20))
+                    }
+                }
+                .buttonStyle(CogPressStyle())
+
+                NavigationLink {
+                    RepairListView().environmentObject(store)
+                } label: {
+                    nookCard(title: "Repair Corner",
+                             line: "\(store.state.repairsRead.count)/\(CogRepairContent.all.count) fixes learned",
+                             tint: CogTheme.seal) {
+                        AnyView(WrenchGlyph().fill(CogTheme.seal).frame(width: 20, height: 20))
+                    }
+                }
+                .buttonStyle(CogPressStyle())
+
+                NavigationLink {
+                    QuizView().environmentObject(store)
+                } label: {
+                    nookCard(title: "Workshop Quiz",
+                             line: store.state.quizBest > 0 ? "Best \(store.state.quizBest)/10" : "Ten questions a round",
+                             tint: CogTheme.teal) {
+                        AnyView(StarGlyph().fill(CogTheme.teal).frame(width: 20, height: 20))
+                    }
+                }
+                .buttonStyle(CogPressStyle())
+
+                NavigationLink {
+                    GlossaryView()
+                } label: {
+                    nookCard(title: "Dictionary",
+                             line: "\(CogLearnContent.glossary.count) workshop terms",
+                             tint: CogTheme.copper) {
+                        AnyView(DrawerGlyph().fill(CogTheme.copper, style: FillStyle(eoFill: true))
+                            .frame(width: 20, height: 20))
+                    }
+                }
+                .buttonStyle(CogPressStyle())
+            }
+        }
+    }
+
+    private func nookCard(title: String, line: String, tint: Color,
+                          icon: @escaping () -> AnyView) -> some View {
+        HStack(spacing: 10) {
+            ZStack {
+                Circle().fill(tint.opacity(0.14)).frame(width: 36, height: 36)
+                icon()
+            }
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(CogTheme.body(13.5, weight: .bold))
+                    .foregroundColor(CogTheme.ink)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                Text(line)
+                    .font(CogTheme.body(10.5))
+                    .foregroundColor(CogTheme.inkSoft)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
+            Spacer(minLength: 0)
+        }
+        .cogCard(padding: 11, corner: 14)
     }
 
     private func wingSection(_ wing: MechWing) -> some View {

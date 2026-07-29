@@ -78,6 +78,7 @@ struct MechScenePainter {
     /// explode and faded when another part is highlighted.
     func part(_ id: String, explode v: CGVector = CGVector(dx: 0, dy: 0),
               _ body: (inout GraphicsContext) -> Void) {
+        if opt.hideCallouts && id == "callout" { return }
         var c = base
         c.opacity = Double(opt.alpha(for: id))
         if opt.explode > 0 {

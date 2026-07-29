@@ -35,6 +35,13 @@
 		GI0000000000000000000220 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = GI0000000000000000000120 /* Assets.xcassets */; };
 		GI0000000000000000000221 /* Art in Resources */ = {isa = PBXBuildFile; fileRef = GI0000000000000000000121 /* Art */; };
 		GI0000000000000000000222 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = GI0000000000000000000124 /* PrivacyInfo.xcprivacy */; };
+		GI0000000000000000001126 /* BenchModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = GI0000000000000000000026 /* BenchModels.swift */; };
+		GI0000000000000000001127 /* BenchChallenges.swift in Sources */ = {isa = PBXBuildFile; fileRef = GI0000000000000000000027 /* BenchChallenges.swift */; };
+		GI0000000000000000001128 /* BenchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = GI0000000000000000000028 /* BenchView.swift */; };
+		GI0000000000000000001129 /* BenchSceneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = GI0000000000000000000029 /* BenchSceneView.swift */; };
+		GI0000000000000000001130 /* ModelHallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = GI0000000000000000000030 /* ModelHallView.swift */; };
+		GI0000000000000000001131 /* RepairContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = GI0000000000000000000031 /* RepairContent.swift */; };
+		GI0000000000000000001132 /* RepairView.swift in Sources */ = {isa = PBXBuildFile; fileRef = GI0000000000000000000032 /* RepairView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -68,6 +75,13 @@
 		GI0000000000000000000122 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		GI0000000000000000000124 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		GI0000000000000000000123 /* Gears Inside.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Gears Inside.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		GI0000000000000000000026 /* BenchModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenchModels.swift; sourceTree = "<group>"; };
+		GI0000000000000000000027 /* BenchChallenges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenchChallenges.swift; sourceTree = "<group>"; };
+		GI0000000000000000000028 /* BenchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenchView.swift; sourceTree = "<group>"; };
+		GI0000000000000000000029 /* BenchSceneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenchSceneView.swift; sourceTree = "<group>"; };
+		GI0000000000000000000030 /* ModelHallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelHallView.swift; sourceTree = "<group>"; };
+		GI0000000000000000000031 /* RepairContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepairContent.swift; sourceTree = "<group>"; };
+		GI0000000000000000000032 /* RepairView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepairView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -117,6 +131,13 @@
 				GI0000000000000000000023 /* CogOnboardingView.swift */,
 				GI0000000000000000000024 /* CogRootView.swift */,
 				GI0000000000000000000025 /* CogConfetti.swift */,
+				GI0000000000000000000026 /* BenchModels.swift */,
+				GI0000000000000000000027 /* BenchChallenges.swift */,
+				GI0000000000000000000028 /* BenchView.swift */,
+				GI0000000000000000000029 /* BenchSceneView.swift */,
+				GI0000000000000000000030 /* ModelHallView.swift */,
+				GI0000000000000000000031 /* RepairContent.swift */,
+				GI0000000000000000000032 /* RepairView.swift */,
 				GI0000000000000000000120 /* Assets.xcassets */,
 				GI0000000000000000000121 /* Art */,
 				GI0000000000000000000122 /* Info.plist */,
@@ -229,6 +250,13 @@
 				GI0000000000000000001123 /* CogOnboardingView.swift in Sources */,
 				GI0000000000000000001124 /* CogRootView.swift in Sources */,
 				GI0000000000000000001125 /* CogConfetti.swift in Sources */,
+				GI0000000000000000001126 /* BenchModels.swift in Sources */,
+				GI0000000000000000001127 /* BenchChallenges.swift in Sources */,
+				GI0000000000000000001128 /* BenchView.swift in Sources */,
+				GI0000000000000000001129 /* BenchSceneView.swift in Sources */,
+				GI0000000000000000001130 /* ModelHallView.swift in Sources */,
+				GI0000000000000000001131 /* RepairContent.swift in Sources */,
+				GI0000000000000000001132 /* RepairView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

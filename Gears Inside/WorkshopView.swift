@@ -2,6 +2,7 @@ import SwiftUI
 
 struct WorkshopView: View {
     @EnvironmentObject var store: CogStore
+    @EnvironmentObject var router: CogTabRouter
 
     private var continueSpec: MechanismSpec? {
         if let last = store.state.lastOpenedMechID,
@@ -15,13 +16,15 @@ struct WorkshopView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                heroBanner
-                statsStrip
-                dailyCard
+                heroBanner.cogAppear(0)
+                statsStrip.cogAppear(1)
+                goalsCard.cogAppear(2)
+                dailyCard.cogAppear(3)
                 if let next = continueSpec, next.id != store.mechanismOfTheDay.id {
-                    continueCard(next)
+                    continueCard(next).cogAppear(4)
                 }
-                wingsShelf
+                quickRow.cogAppear(5)
+                wingsShelf.cogAppear(6)
             }
             .padding(.horizontal, 18)
             .padding(.bottom, 28)
@@ -32,25 +35,122 @@ struct WorkshopView: View {
     }
 
     private var heroBanner: some View {
-        ZStack(alignment: .bottomLeading) {
-            CogArtImage(name: "hero_workshop", corner: 22)
-                .frame(height: 175)
+        ZStack(alignment: .topLeading) {
+            BenchSceneView(daily: store.mechanismOfTheDay)
+                .frame(height: 230)
                 .frame(maxWidth: .infinity)
-                .clipped()
-            LinearGradient(colors: [Color.clear, CogTheme.ink.opacity(0.55)],
-                           startPoint: .center, endPoint: .bottom)
-                .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
-            VStack(alignment: .leading, spacing: 3) {
+            VStack(alignment: .leading, spacing: 2) {
                 Text("Gears Inside")
-                    .font(CogTheme.title(28))
+                    .font(CogTheme.title(26))
                     .foregroundColor(.white)
+                    .shadow(color: .black.opacity(0.45), radius: 3, y: 1)
                 Text("Every machine has a secret. Open it.")
-                    .font(CogTheme.body(13.5))
-                    .foregroundColor(.white.opacity(0.88))
+                    .font(CogTheme.body(12.5))
+                    .foregroundColor(.white.opacity(0.92))
+                    .shadow(color: .black.opacity(0.45), radius: 2, y: 1)
             }
-            .padding(16)
+            .padding(14)
         }
         .padding(.top, 8)
+    }
+
+    // MARK: Daily goals
+
+    private var goalsCard: some View {
+        let goals = store.todayGoals
+        let perfect = goals.count >= 3
+        return VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Text("Today at the bench")
+                    .font(CogTheme.title(17))
+                    .foregroundColor(CogTheme.ink)
+                Spacer()
+                if perfect {
+                    CogTag(text: "Perfect day  +10 XP", color: CogTheme.gold, filled: true)
+                } else {
+                    Text("\(goals.count)/3")
+                        .font(CogTheme.mono(13))
+                        .foregroundColor(CogTheme.inkSoft)
+                }
+            }
+            goalRow(done: goals.contains("daily"),
+                    text: "Open the Mechanism of the Day")
+            goalRow(done: goals.contains("bench"),
+                    text: "Solve a Test Bench challenge")
+            goalRow(done: goals.contains("quiz"),
+                    text: "Finish a quiz round")
+        }
+        .cogCard()
+    }
+
+    private func goalRow(done: Bool, text: String) -> some View {
+        HStack(spacing: 10) {
+            ZStack {
+                Circle()
+                    .fill(done ? CogTheme.leaf.opacity(0.16) : CogTheme.paperDeep)
+                    .frame(width: 24, height: 24)
+                if done {
+                    CheckGlyph()
+                        .stroke(CogTheme.leaf, style: StrokeStyle(lineWidth: 2.4, lineCap: .round, lineJoin: .round))
+                        .frame(width: 11, height: 11)
+                }
+            }
+            Text(text)
+                .font(CogTheme.body(13.5, weight: done ? .semibold : .regular))
+                .foregroundColor(done ? CogTheme.ink : CogTheme.inkSoft)
+            Spacer(minLength: 0)
+        }
+    }
+
+    // MARK: Quick cards
+
+    private var quickRow: some View {
+        HStack(spacing: 12) {
+            NavigationLink {
+                RepairListView().environmentObject(store)
+            } label: {
+                quickCard(title: "Repair Corner",
+                          line: "Fix real things — zippers, hinges, chains.",
+                          tint: CogTheme.seal) {
+                    AnyView(WrenchGlyph().fill(CogTheme.seal).frame(width: 22, height: 22))
+                }
+            }
+            .buttonStyle(CogPressStyle())
+
+            Button {
+                router.tab = 2
+                CogHaptics.tick()
+            } label: {
+                quickCard(title: "Test Bench",
+                          line: "Rig gears, chase ratios, beat challenges.",
+                          tint: CogTheme.teal) {
+                    AnyView(GearGlyph(teeth: 8)
+                        .fill(CogTheme.teal, style: FillStyle(eoFill: true))
+                        .frame(width: 22, height: 22))
+                }
+            }
+            .buttonStyle(CogPressStyle())
+        }
+    }
+
+    private func quickCard(title: String, line: String, tint: Color,
+                           icon: @escaping () -> AnyView) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            ZStack {
+                Circle().fill(tint.opacity(0.14)).frame(width: 38, height: 38)
+                icon()
+            }
+            Text(title)
+                .font(CogTheme.body(14, weight: .bold))
+                .foregroundColor(CogTheme.ink)
+            Text(line)
+                .font(CogTheme.body(11.5))
+                .foregroundColor(CogTheme.inkSoft)
+                .lineLimit(2)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .cogCard(padding: 13, corner: 16)
     }
 
     private var statsStrip: some View {
