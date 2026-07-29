@@ -1,0 +1,171 @@
+import Foundation
+
+enum CogLearnContent {
+
+    static let guides: [CogGuide] = [
+        CogGuide(
+            id: "gears",
+            title: "What a Gear Really Does",
+            subtitle: "It's not about spinning — it's about trading.",
+            artName: "guide_gears",
+            minutes: 3,
+            sections: [
+                CogGuideSection(heading: "A wheel with a promise",
+                    text: "A gear is a wheel that promises never to slip. Its teeth interlock with a neighbour's, so their rims must move together, tooth for tooth. That single promise lets engineers move power around a machine as reliably as wire moves electricity."),
+                CogGuideSection(heading: "The great trade",
+                    text: "Because teeth can't slip, a big gear driving a small one always trades speed for force at an exact rate. Twenty-four teeth against twelve means twice the speed and half the turning force — or the reverse, if you drive it from the other side. Nothing is created, nothing lost."),
+                CogGuideSection(heading: "Direction flips",
+                    text: "Two meshed gears always spin opposite ways — like two hands rolling a pencil between them. When designers need the same direction, they slip a third 'idler' gear in between. It changes nothing about the ratio; it just flips the flip."),
+                CogGuideSection(heading: "Why teeth are curved",
+                    text: "Look closely at real gear teeth and you'll see gentle S-curves, not straight walls. The shape is called an involute, and it guarantees the push between teeth stays smooth and even as they roll through contact — no jerks, no chatter, minimal wear."),
+            ]),
+
+        CogGuide(
+            id: "ratio",
+            title: "The Magic of Ratios",
+            subtitle: "How machines multiply your strength.",
+            artName: "guide_ratio",
+            minutes: 3,
+            sections: [
+                CogGuideSection(heading: "Count the teeth",
+                    text: "Every gear pair hides a fraction: teeth on the driven wheel over teeth on the driver. A 36-tooth wheel driven by a 12-tooth pinion gives 36/12 = 3. The output turns three times slower — and pushes three times harder."),
+                CogGuideSection(heading: "Chains of gears",
+                    text: "Ratios multiply down a chain. Two 3:1 stages make 9:1; add a third and you're at 27:1. That's how a watch turns a fast-ticking balance into an hour hand that creeps around just twice a day — and how a cordless drill turns a whizzing motor into slow, wrist-twisting torque."),
+                CogGuideSection(heading: "The worm's shortcut",
+                    text: "A worm gear reaches huge ratios in one step: its single spiral thread advances the wheel one tooth per revolution, so a 40-tooth wheel means 40:1 instantly. The price is friction — and the bonus is self-locking, because the wheel can't drive the worm backwards."),
+                CogGuideSection(heading: "Nothing for free",
+                    text: "Every ratio obeys the same iron rule: force times distance stays constant. Triple the force, and you must turn three times as far. Machines never give you extra energy — they only let you spend yours at a rate your muscles prefer."),
+            ]),
+
+        CogGuide(
+            id: "simple",
+            title: "The Six Simple Machines",
+            subtitle: "Antiquity's complete toolbox.",
+            artName: "guide_simple",
+            minutes: 4,
+            sections: [
+                CogGuideSection(heading: "Lever and wheel",
+                    text: "The lever is the oldest bargain: push farther from the pivot and you push harder. The wheel and axle is a lever bent into a circle — a large wheel rim turning a thin axle multiplies force just like a long crowbar. Between them they move most of the world."),
+                CogGuideSection(heading: "Pulley and inclined plane",
+                    text: "A single pulley merely redirects a pull, which is already precious — pulling down is easier than lifting up. Combine pulleys into a block and tackle and each supporting rope strand shares the load. The inclined plane does the same for hills: a longer, gentler path costs less force."),
+                CogGuideSection(heading: "Wedge and screw",
+                    text: "A wedge is an inclined plane you push into things — axes, zipper hearts and door stops all count. A screw is an inclined plane wrapped around a post: every turn climbs the thread a tiny, powerful step. Archimedes lifted water with it; your jar lid still uses it."),
+                CogGuideSection(heading: "Everything is a mix",
+                    text: "Renaissance engineers realised every machine, however grand, breaks down into these six. A steam locomotive is wheels, levers and cranks; a lock is wedges and springs; a music box is a screw, a wheel and sixty tiny levers that happen to sing."),
+            ]),
+
+        CogGuide(
+            id: "clock",
+            title: "How Clocks Keep Time",
+            subtitle: "The escapement's patient bargain.",
+            artName: "guide_clock",
+            minutes: 4,
+            sections: [
+                CogGuideSection(heading: "The problem of slow",
+                    text: "Weights and springs are eager — release them and they spend all their energy at once. A clock's real challenge is slowness: letting that energy out in perfectly equal crumbs, hour after hour. The device that does it is the escapement, the most romantic mechanism ever cut in brass."),
+                CogGuideSection(heading: "A pendulum's secret",
+                    text: "Galileo noticed a swinging lamp kept the same beat whether it swung wide or narrow. Only the pendulum's length matters: one metre swings once per second, whatever the push. That constancy makes a pendulum nature's free metronome — if you can keep it swinging."),
+                CogGuideSection(heading: "Tick, tock",
+                    text: "The anchor escapement, perfected after Huygens' 1657 clock, rocks with the pendulum. Each swing lifts one pallet out of the escape wheel's path while the other drops in — the wheel leaps half a tooth and slams to a stop. The tick and the tock are those two landings."),
+                CogGuideSection(heading: "Paying the pendulum",
+                    text: "Friction and air would still every pendulum in minutes. So each escaping tooth gives the anchor a tiny nudge — energy from the weight, delivered in doses small enough not to disturb the beat. The clock feeds its own timekeeper. That loop ran the world's time for 270 years."),
+            ]),
+
+        CogGuide(
+            id: "steam",
+            title: "From Steam to Speed",
+            subtitle: "How pistons learned to turn wheels.",
+            artName: "guide_steam",
+            minutes: 4,
+            sections: [
+                CogGuideSection(heading: "Pressure in a box",
+                    text: "Boil water in a closed vessel and it desperately wants out — steam takes up 1,600 times the room of the water it came from. Aim that urgency at a sliding piston and you have a push. The whole steam age is that push, harnessed."),
+                CogGuideSection(heading: "The crank's translation",
+                    text: "A push is straight; a wheel is round. The crank and connecting rod translate between them: piston shoves rod, rod cranks the offset pin, wheel turns. At each end of the stroke the geometry goes momentarily dead — which is why locomotives set their two cylinders 90 degrees apart, so one is always mid-push."),
+                CogGuideSection(heading: "Wheels in step",
+                    text: "One driving wheel can slip on a wet rail. So locomotives chained their drivers together with side rods — those glorious rods you see rising and dipping in unison. Every wheel grips the rail as a team, and the engine gallops."),
+                CogGuideSection(heading: "The same dance today",
+                    text: "The four-stroke engine in a modern car is the same crank-and-piston dance with combustion instead of a boiler: suck, squeeze, bang, blow — two crank turns per power stroke, smoothed by a flywheel. Steam left; the geometry stayed."),
+            ]),
+
+        CogGuide(
+            id: "linkage",
+            title: "Linkages Everywhere",
+            subtitle: "Four hinged bars can do almost anything.",
+            artName: "guide_linkage",
+            minutes: 3,
+            sections: [
+                CogGuideSection(heading: "Bars and pins",
+                    text: "Take four stiff bars, pin them corner to corner into a loop, fix one bar to the ground — and the remaining three move in one precise, repeatable path. This 'four-bar linkage' is the quiet workhorse of mechanism design, cheap to make and nearly impossible to wear out."),
+                CogGuideSection(heading: "Crank meets rocker",
+                    text: "Size the bars right and a full-circle crank drives a partial-swing rocker: that's your windscreen wiper, powered by a motor that never reverses. Other proportions give double rockers (both sides swing) or drag links (both spin) — a whole family from one recipe."),
+                CogGuideSection(heading: "Drawing with motion",
+                    text: "The coupler bar — the one floating between crank and rocker — traces elegant curves as it moves. Engineers once published thick atlases of these 'coupler curves' and picked shapes from them like fabric patterns: a flat-bottomed curve for a film advance, a looping one for a stitching needle."),
+                CogGuideSection(heading: "Look for the pins",
+                    text: "Once you know the trick you'll see linkages everywhere: folding pram hoods, desk lamps that float, excavator buckets, bicycle rear suspensions, pedal-bin lids. Count the pivots — if you find four in a loop, you've found the family."),
+            ]),
+
+        CogGuide(
+            id: "friction",
+            title: "Friction, Oil & Bearings",
+            subtitle: "The silent tax every machine pays.",
+            artName: "guide_friction",
+            minutes: 3,
+            sections: [
+                CogGuideSection(heading: "The tax collector",
+                    text: "Every sliding surface charges a toll in heat and wear. Machines lose ten, twenty, sometimes half their power to friction — which is why so much of mechanical engineering is really the art of making things rub less."),
+                CogGuideSection(heading: "Roll, don't slide",
+                    text: "A rolling wheel wastes far less than a sliding block — so engineers put tiny wheels inside the machine itself. Ball and roller bearings surround a spinning shaft with hard steel spheres, replacing a smear of sliding contact with a parade of rolling points. Cam followers get roller tips for the same reason."),
+                CogGuideSection(heading: "Liquid armour",
+                    text: "Oil's job is not to make things slippery — it's to keep them apart. A properly lubricated shaft floats on a film thinner than a hair, metal never touching metal. Clockmakers use a drop the size of a pinhead; a ship's engine pumps a swimming pool of it."),
+                CogGuideSection(heading: "Friction the ally",
+                    text: "Sometimes the tax collector switches sides. Brakes, belts, clutches and your shoes all work because of friction. A worm gear's self-locking grip — the reason a guitar stays in tune — is 'wasteful' friction doing exactly the job you want."),
+            ]),
+
+        CogGuide(
+            id: "locks",
+            title: "A Short History of Locks",
+            subtitle: "Four thousand years of keeping out.",
+            artName: "guide_locks",
+            minutes: 3,
+            sections: [
+                CogGuideSection(heading: "Wooden beginnings",
+                    text: "Egyptian granaries were guarded by wooden pin locks: lift the right pattern of pegs with a toothbrush-shaped wooden key and the bolt slides free. The idea — movable pins reading a key's profile — is over four thousand years old and has never really been improved, only miniaturised."),
+                CogGuideSection(heading: "Iron and ornament",
+                    text: "Medieval smiths built magnificent iron chest locks with wards — fixed obstacles that only a matching key could snake past. They looked fearsome but picked easily; much of their security was theatre, and locksmiths knew it. The beautiful engraved plates were half deterrent, half advertisement."),
+                CogGuideSection(heading: "Yale's little cylinder",
+                    text: "In 1861 Linus Yale Jr. shrank the Egyptian idea into a brass cylinder small enough for any door: five spring-loaded pin stacks, split at different heights, blocking a rotating plug. Only a key lifting every split exactly to the shear line frees it. Your front door almost certainly agrees."),
+                CogGuideSection(heading: "An honest machine",
+                    text: "A pin lock never bluffs: it is a five-digit measuring instrument that answers one question — is this exactly the right key? Each pin is a judge, and all five must agree. It's precision engineering you trust every day without ever seeing inside. Until now."),
+            ]),
+    ]
+
+    static let glossary: [CogGlossaryTerm] = [
+        CogGlossaryTerm(id: "bearing", term: "Bearing", definition: "A component that lets a shaft spin with minimal friction, often using rolling balls or rollers."),
+        CogGlossaryTerm(id: "cam", term: "Cam", definition: "A shaped rotating profile that pushes a follower through a designed motion — a programme carved in metal."),
+        CogGlossaryTerm(id: "carrier", term: "Carrier", definition: "In a planetary gearset, the frame that holds the planet gear pins and often serves as the output."),
+        CogGlossaryTerm(id: "coupler", term: "Coupler", definition: "The floating middle bar of a four-bar linkage, connecting crank to rocker."),
+        CogGlossaryTerm(id: "crank", term: "Crank", definition: "An arm or offset pin on a rotating shaft that converts rotation to reciprocation, or the reverse."),
+        CogGlossaryTerm(id: "deadcentre", term: "Dead centre", definition: "The two stroke positions where a crank and rod line up and can transmit no turning force."),
+        CogGlossaryTerm(id: "driver", term: "Driver", definition: "The gear or wheel that power enters on; its partner is the driven or follower."),
+        CogGlossaryTerm(id: "escapement", term: "Escapement", definition: "The clock mechanism that lets a driven wheel advance one small step per beat of a pendulum or balance."),
+        CogGlossaryTerm(id: "flywheel", term: "Flywheel", definition: "A heavy wheel that stores spinning energy, smoothing out jerky power strokes."),
+        CogGlossaryTerm(id: "follower", term: "Follower", definition: "The part that rides on a cam's profile, converting rotation into programmed lift."),
+        CogGlossaryTerm(id: "gearratio", term: "Gear ratio", definition: "Driven teeth divided by driver teeth: the exact trade between speed and turning force."),
+        CogGlossaryTerm(id: "idler", term: "Idler gear", definition: "A gear inserted between two others to restore direction of rotation; it never changes the ratio."),
+        CogGlossaryTerm(id: "involute", term: "Involute", definition: "The special curve of gear tooth flanks that keeps the force between teeth smooth as they roll through mesh."),
+        CogGlossaryTerm(id: "linkage", term: "Linkage", definition: "An assembly of rigid bars joined by pivots that guides motion along a designed path."),
+        CogGlossaryTerm(id: "mechadvantage", term: "Mechanical advantage", definition: "How many times a mechanism multiplies your input force — always paid for in extra distance."),
+        CogGlossaryTerm(id: "pallet", term: "Pallet", definition: "One of the two angled faces on a clock's anchor that alternately catch and release the escape wheel."),
+        CogGlossaryTerm(id: "pawl", term: "Pawl", definition: "A hinged finger that drops behind ratchet teeth, permitting motion one way and blocking the other."),
+        CogGlossaryTerm(id: "pinion", term: "Pinion", definition: "The smaller gear of a meshing pair, or the round gear that drives a rack."),
+        CogGlossaryTerm(id: "pitch", term: "Pitch", definition: "The spacing from one gear tooth to the next; meshing gears must share the same pitch."),
+        CogGlossaryTerm(id: "rack", term: "Rack", definition: "A gear unrolled into a straight toothed bar, turning rotation into straight-line travel."),
+        CogGlossaryTerm(id: "ratchet", term: "Ratchet", definition: "A saw-toothed wheel paired with a pawl to allow rotation in only one direction."),
+        CogGlossaryTerm(id: "reciprocation", term: "Reciprocation", definition: "Back-and-forth motion, as of a piston — the partner of rotation in most engines."),
+        CogGlossaryTerm(id: "shearline", term: "Shear line", definition: "In a pin lock, the boundary between plug and housing where every pin split must align."),
+        CogGlossaryTerm(id: "sheave", term: "Sheave", definition: "The grooved wheel inside a pulley block that the rope runs over."),
+        CogGlossaryTerm(id: "torque", term: "Torque", definition: "Turning force — what gear ratios trade against speed."),
+        CogGlossaryTerm(id: "wormgear", term: "Worm gear", definition: "A screw meshing with a toothed wheel, giving a large ratio in one stage and usually self-locking."),
+    ]
+}
