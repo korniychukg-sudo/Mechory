@@ -158,6 +158,7 @@ struct RepairDetailView: View {
                         .buttonStyle(CogPressStyle())
                     }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .cogCard()
 
                 // Steps.
@@ -179,6 +180,7 @@ struct RepairDetailView: View {
                         }
                     }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .cogCard()
 
                 // Prevention.
@@ -196,6 +198,7 @@ struct RepairDetailView: View {
                         }
                     }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .cogCard()
 
                 // Pro note.
