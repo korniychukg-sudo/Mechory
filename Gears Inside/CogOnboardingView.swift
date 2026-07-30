@@ -31,8 +31,8 @@ struct CogOnboardingView: View {
                         VStack(spacing: 22) {
                             Spacer(minLength: 10)
                             CogArtImage(name: slide.art, corner: 26)
-                                .frame(maxWidth: 420)
                                 .aspectRatio(0.86, contentMode: .fit)
+                                .frame(maxWidth: 420, maxHeight: 470)
                                 .clipped()
                                 .padding(.horizontal, 30)
                             VStack(spacing: 10) {

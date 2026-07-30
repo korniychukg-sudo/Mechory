@@ -78,9 +78,19 @@ struct BenchBoard {
         return !placed.contains { $0.col == col && $0.row == row }
     }
 
+    /// The board is drawn with one hole of margin all round, so a gear only
+    /// fits when its rim stays inside that margin. Big wheels therefore need
+    /// the middle of the board — exactly like a real pegboard.
+    func fits(col: Int, row: Int, size: BenchGearSize) -> Bool {
+        let slack = size.radius - 1.0
+        let c = Double(col), r = Double(row)
+        return c >= slack && c <= Double(cols - 1) - slack
+            && r >= slack && r <= Double(rows - 1) - slack
+    }
+
     /// A new gear may touch (mesh) but never overlap an existing one.
     func canPlace(col: Int, row: Int, size: BenchGearSize) -> Bool {
-        guard isFree(col: col, row: row) else { return false }
+        guard isFree(col: col, row: row), fits(col: col, row: row, size: size) else { return false }
         for g in allGears {
             let d = hypot(Double(g.col - col), Double(g.row - row))
             if d < g.size.radius + size.radius - Self.meshTolerance {
@@ -109,7 +119,8 @@ struct BenchBoard {
         placed = placed.filter { p in
             guard p.col >= 0, p.col < cols, p.row >= 0, p.row < rows else { return false }
             guard !(p.col == motorCol && p.row == motorRow) else { return false }
-            guard BenchGearSize(rawValue: p.size) != nil else { return false }
+            guard let size = BenchGearSize(rawValue: p.size) else { return false }
+            guard fits(col: p.col, row: p.row, size: size) else { return false }
             let key = "\(p.col):\(p.row)"
             if seen.contains(key) { return false }
             seen.insert(key)
@@ -246,6 +257,28 @@ func benchSolverSelfTest() {
     assert(b7.placed.count == 2, "triangle gears must pass canPlace")
     let r7 = b7.solved()
     assert(r7.jammed, "odd cycle must jam")
-    print("BENCH SELFTEST OK")
+
+    // Every challenge must stay solvable with the gears it ships: each
+    // placement has to pass canPlace (fit + collision) and the worked
+    // solution has to satisfy the goal.
+    for challenge in BenchChallenge.all {
+        var board = challenge.makeBoard()
+        assert(board.fits(col: board.motorCol, row: board.motorRow, size: board.motorSize),
+               "\(challenge.id): motor does not fit the board")
+        for step in challenge.solution {
+            guard let size = BenchGearSize(rawValue: step.size) else {
+                assertionFailure("\(challenge.id): bad gear size \(step.size)")
+                continue
+            }
+            assert(board.canPlace(col: step.col, row: step.row, size: size),
+                   "\(challenge.id): cannot place \(step.size) at \(step.col),\(step.row)")
+            board.place(col: step.col, row: step.row, size: size)
+        }
+        assert(board.placedCount == challenge.solution.count,
+               "\(challenge.id): solution did not fully apply")
+        assert(!board.solved().jammed, "\(challenge.id): solution jams the train")
+        assert(challenge.isMet(board), "\(challenge.id): solution does not meet the goal")
+    }
+    print("BENCH SELFTEST OK (\(BenchChallenge.all.count) challenges verified)")
 }
 #endif

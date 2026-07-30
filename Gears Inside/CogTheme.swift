@@ -133,14 +133,27 @@ struct CogArtImage: View {
 struct CogAppear: ViewModifier {
     let index: Int
     @State private var shown = false
+    /// Safety net: a view that appears while the app is in the background can
+    /// be left mid-animation, which would hide the content for good. This
+    /// snaps it visible without animation once the delay has passed.
+    @State private var settled = false
+
+    private var delay: Double { Double(index) * 0.07 }
 
     func body(content: Content) -> some View {
-        content
-            .opacity(shown ? 1 : 0)
-            .offset(y: shown ? 0 : 10)
+        let visible = shown || settled
+        return content
+            .opacity(visible ? 1 : 0)
+            .offset(y: visible ? 0 : 10)
             .onAppear {
-                withAnimation(.easeOut(duration: 0.4).delay(Double(index) * 0.07)) {
+                withAnimation(.easeOut(duration: 0.4).delay(delay)) {
                     shown = true
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.2 + delay) {
+                    guard !settled else { return }
+                    var tx = Transaction()
+                    tx.disablesAnimations = true
+                    withTransaction(tx) { settled = true }
                 }
             }
     }

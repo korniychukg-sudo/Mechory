@@ -30,8 +30,12 @@ struct CogRootView: View {
                 Group {
                     switch screen {
                     case "repair": RepairListView().environmentObject(store)
-                    case "repairdetail": RepairDetailView(guide: CogRepairContent.all[0]).environmentObject(store)
+                    case "repairdetail": RepairDetailView(guide: CogRepairContent.all[4]).environmentObject(store)
                     case "guides": GuidesListView().environmentObject(store)
+                    case "guidedetail": GuideDetailView(guide: CogLearnContent.guides[3]).environmentObject(store)
+                    case "quiz": QuizView().environmentObject(store)
+                    case "challenge": BenchChallengeView(challenge: BenchChallenge.all[4]).environmentObject(store)
+                    case "wing": WingDetailView(wing: .machines).environmentObject(store)
                     default: GlossaryView()
                     }
                 }

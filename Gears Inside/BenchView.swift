@@ -6,6 +6,12 @@ struct BenchView: View {
     @EnvironmentObject var store: CogStore
     @State private var section = 0   // 0 free play, 1 challenges
 
+    #if DEBUG
+    private var forcedSection: Int? {
+        ProcessInfo.processInfo.environment["COG_BENCH"] == "challenges" ? 1 : nil
+    }
+    #endif
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
@@ -35,6 +41,11 @@ struct BenchView: View {
         }
         .background(CogTheme.paper.ignoresSafeArea())
         .navigationBarHidden(true)
+        .onAppear {
+            #if DEBUG
+            if let forced = forcedSection { section = forced }
+            #endif
+        }
     }
 
     private func segButton(_ label: String, index: Int) -> some View {
@@ -227,11 +238,24 @@ struct BenchBoardPanel: View {
 
     var body: some View {
         VStack(spacing: 12) {
-            boardCanvas
-                .aspectRatio(CGFloat(board.cols + 1) / CGFloat(board.rows + 1), contentMode: .fit)
+            ZStack(alignment: .bottom) {
+                boardCanvas
+                    .aspectRatio(CGFloat(board.cols + 1) / CGFloat(board.rows + 1), contentMode: .fit)
+                if let hint = rejectHint {
+                    Text(hint)
+                        .font(CogTheme.body(12, weight: .semibold))
+                        .foregroundColor(CogTheme.card)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 7)
+                        .background(Capsule().fill(CogTheme.ink.opacity(0.82)))
+                        .padding(.bottom, 12)
+                        .transition(.opacity)
+                }
+            }
             palette
             controls
         }
+        .animation(.easeInOut(duration: 0.2), value: rejectHint)
     }
 
     // MARK: Canvas
@@ -388,9 +412,18 @@ struct BenchBoardPanel: View {
                 onChange()
             } else {
                 CogHaptics.warning()
+                rejectHint = board.fits(col: hit.col, row: hit.row, size: size)
+                    ? "No room — that hole is taken or too close."
+                    : "A \(size.label) wheel needs more space from the edge."
+                let shown = rejectHint
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
+                    if rejectHint == shown { rejectHint = nil }
+                }
             }
         }
     }
+
+    @State private var rejectHint: String? = nil
 
     // MARK: Palette & controls
 

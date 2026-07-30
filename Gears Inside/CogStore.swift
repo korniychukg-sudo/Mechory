@@ -148,8 +148,8 @@ final class CogStore: ObservableObject {
         // A meshed train on the free-play bench: motor 12t -> 12t -> 16t -> 8t.
         s.benchLayout = [
             BenchPlacement(col: 4, row: 1, size: "medium"),
-            BenchPlacement(col: 6, row: 4, size: "large"),
-            BenchPlacement(col: 6, row: 7, size: "small"),
+            BenchPlacement(col: 4, row: 4, size: "medium"),
+            BenchPlacement(col: 2, row: 7, size: "large"),
         ]
         s.challengesDone = ["c01", "c02", "c04"]
         s.jamsCaused = 2
