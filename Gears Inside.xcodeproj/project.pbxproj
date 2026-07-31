@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		GI0000000000000000001101 /* GearsInsideApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = GI0000000000000000000001 /* GearsInsideApp.swift */; };
-		GI0000000000000000001102 /* CogWebPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = GI0000000000000000000002 /* CogWebPanel.swift */; };
-		GI0000000000000000001103 /* CogLaunchScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = GI0000000000000000000003 /* CogLaunchScreen.swift */; };
 		GI0000000000000000001104 /* CogTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = GI0000000000000000000004 /* CogTheme.swift */; };
 		GI0000000000000000001105 /* CogIcons.swift in Sources */ = {isa = PBXBuildFile; fileRef = GI0000000000000000000005 /* CogIcons.swift */; };
 		GI0000000000000000001106 /* CogModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = GI0000000000000000000006 /* CogModels.swift */; };
@@ -46,8 +44,6 @@
 
 /* Begin PBXFileReference section */
 		GI0000000000000000000001 /* GearsInsideApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GearsInsideApp.swift; sourceTree = "<group>"; };
-		GI0000000000000000000002 /* CogWebPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CogWebPanel.swift; sourceTree = "<group>"; };
-		GI0000000000000000000003 /* CogLaunchScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CogLaunchScreen.swift; sourceTree = "<group>"; };
 		GI0000000000000000000004 /* CogTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CogTheme.swift; sourceTree = "<group>"; };
 		GI0000000000000000000005 /* CogIcons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CogIcons.swift; sourceTree = "<group>"; };
 		GI0000000000000000000006 /* CogModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CogModels.swift; sourceTree = "<group>"; };
@@ -107,8 +103,6 @@
 			isa = PBXGroup;
 			children = (
 				GI0000000000000000000001 /* GearsInsideApp.swift */,
-				GI0000000000000000000002 /* CogWebPanel.swift */,
-				GI0000000000000000000003 /* CogLaunchScreen.swift */,
 				GI0000000000000000000004 /* CogTheme.swift */,
 				GI0000000000000000000005 /* CogIcons.swift */,
 				GI0000000000000000000006 /* CogModels.swift */,
@@ -226,8 +220,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				GI0000000000000000001101 /* GearsInsideApp.swift in Sources */,
-				GI0000000000000000001102 /* CogWebPanel.swift in Sources */,
-				GI0000000000000000001103 /* CogLaunchScreen.swift in Sources */,
 				GI0000000000000000001104 /* CogTheme.swift in Sources */,
 				GI0000000000000000001105 /* CogIcons.swift in Sources */,
 				GI0000000000000000001106 /* CogModels.swift in Sources */,
