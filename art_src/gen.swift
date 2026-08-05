@@ -1,4 +1,4 @@
-// Art generator for Gears Inside — deterministic CoreGraphics renderings.
+// Art generator for Mechory — deterministic CoreGraphics renderings.
 // Build & run on macOS:  swiftc -O gen.swift -o gen && ./gen <outDir> <iconDir>
 import Foundation
 import CoreGraphics
