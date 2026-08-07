@@ -36,7 +36,6 @@ struct CogRootView: View {
                     case "quiz": QuizView().environmentObject(store)
                     case "challenge": BenchChallengeView(challenge: BenchChallenge.all[4]).environmentObject(store)
                     case "wing": WingDetailView(wing: .machines).environmentObject(store)
-                    case "privacy": CogPrivacyView()
                     default: GlossaryView()
                     }
                 }

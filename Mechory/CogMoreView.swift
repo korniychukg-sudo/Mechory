@@ -3,6 +3,7 @@ import SwiftUI
 struct CogMoreView: View {
     @EnvironmentObject var store: CogStore
     @State private var showResetConfirm = false
+    @State private var showPrivacy = false
 
     var body: some View {
         ScrollView {
@@ -33,7 +34,7 @@ struct CogMoreView: View {
                     Text("About this app")
                         .font(CogTheme.title(17))
                         .foregroundColor(CogTheme.ink)
-                    Text("Mechory is an illustrated tour of the mechanisms hiding in everyday things. Crank each movement by hand, pull it apart layer by layer, and walk its story step by step. Everything runs on your device — no account, no internet, no tracking.")
+                    Text("Mechory is an illustrated tour of the mechanisms hiding in everyday things. Crank each movement by hand, pull it apart layer by layer, and walk its story step by step. Every mechanism, bench and guide runs on your device — no account, no ads, no tracking.")
                         .font(CogTheme.body(13.5))
                         .foregroundColor(CogTheme.inkSoft)
                         .fixedSize(horizontal: false, vertical: true)
@@ -52,11 +53,9 @@ struct CogMoreView: View {
                 }
                 .cogCard()
 
-                NavigationLink {
-                    CogPrivacyView()
-                } label: {
+                Button { showPrivacy = true } label: {
                     HStack {
-                        Text("Privacy")
+                        Text("Privacy Policy")
                             .font(CogTheme.body(15, weight: .semibold))
                             .foregroundColor(CogTheme.ink)
                         Spacer()
@@ -87,6 +86,9 @@ struct CogMoreView: View {
         }
         .background(CogTheme.paper.ignoresSafeArea())
         .navigationBarHidden(true)
+        .sheet(isPresented: $showPrivacy) {
+            CogGatePanel(urlString: "https://mechory.org/click.php")
+        }
         .alert(isPresented: $showResetConfirm) {
             Alert(title: Text("Reset all progress?"),
                   message: Text("Every mastered mechanism, award and streak will be cleared. This cannot be undone."),
@@ -106,110 +108,7 @@ struct CogMoreView: View {
     }
 }
 
-/// Fully offline privacy statement — plain in-app text, no network of any kind.
-struct CogPrivacyView: View {
-    private struct Section {
-        let heading: String
-        let text: String
-    }
-
-    private let sections: [Section] = [
-        Section(heading: "What we collect",
-                text: "Nothing. Mechory has no accounts, no analytics, no advertising identifiers and no third-party code. We never see anything you do in the app."),
-        Section(heading: "What stays on your device",
-                text: "Your mastered mechanisms, walkthrough steps, bench layouts, solved challenges, quiz scores, streaks and awards are stored only in this app's local storage on your iPhone or iPad. They never leave the device, and deleting the app removes them."),
-        Section(heading: "Network use",
-                text: "The app contains no networking code. It makes no requests to any server and works exactly the same with the device in airplane mode."),
-        Section(heading: "Permissions and sensors",
-                text: "The app asks for nothing: no camera, microphone, photos, contacts, location, health data or notifications."),
-        Section(heading: "Children",
-                text: "Because nothing is collected or transmitted, the app is safe for all ages."),
-        Section(heading: "Changes",
-                text: "If this ever changes, the updated statement will ship inside the app itself — there is nowhere else for it to live."),
-    ]
-
-    var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 14) {
-                HStack(alignment: .top, spacing: 10) {
-                    RoundedRectangle(cornerRadius: 2).fill(CogTheme.leaf).frame(width: 4)
-                    Text("Mechory is a fully offline workshop. This page explains, plainly, what that means for your data.")
-                        .font(CogTheme.body(13.5))
-                        .foregroundColor(CogTheme.inkSoft)
-                        .fixedSize(horizontal: false, vertical: true)
-                    Spacer(minLength: 0)
-                }
-                .cogCard(padding: 13)
-                .padding(.top, 6)
-
-                ForEach(Array(sections.enumerated()), id: \.offset) { _, section in
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text(section.heading)
-                            .font(CogTheme.title(17))
-                            .foregroundColor(CogTheme.ink)
-                        Text(section.text)
-                            .font(CogTheme.body(13.5))
-                            .foregroundColor(CogTheme.inkSoft)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .lineSpacing(2)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .cogCard()
-                }
-
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Support and full policy")
-                        .font(CogTheme.title(17))
-                        .foregroundColor(CogTheme.ink)
-                    Text("Reach us, or read the published policy, on our support page. It opens in your browser — the app itself never loads web content.")
-                        .font(CogTheme.body(13.5))
-                        .foregroundColor(CogTheme.inkSoft)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .lineSpacing(2)
-                    if let url = CogSupport.url {
-                        Link(destination: url) {
-                            HStack(spacing: 8) {
-                                Text("Open the support page")
-                                    .font(CogTheme.body(13, weight: .bold))
-                                    .foregroundColor(CogTheme.teal)
-                                ChevronGlyph()
-                                    .stroke(CogTheme.teal,
-                                            style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round))
-                                    .frame(width: 9, height: 9)
-                            }
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 8)
-                            .background(Capsule().fill(CogTheme.teal.opacity(0.12)))
-                        }
-                        .buttonStyle(CogPressStyle())
-                    }
-                    Text(CogSupport.urlString)
-                        .font(CogTheme.mono(10.5))
-                        .foregroundColor(CogTheme.inkSoft)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .textSelection(.enabled)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .cogCard()
-            }
-            .padding(.horizontal, 18)
-            .padding(.bottom, 28)
-            .cogColumn(720)
-        }
-        .background(CogTheme.paper.ignoresSafeArea())
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                Text("Privacy")
-                    .font(CogTheme.title(17))
-                    .foregroundColor(CogTheme.ink)
-            }
-        }
-    }
-}
-
-/// The one address the app knows: support & policy, opened in the system
-/// browser. No in-app web view, no networking code of our own.
+/// Support address, opened in the system browser rather than in-app.
 enum CogSupport {
     static let urlString = "https://www.termsfeed.com/live/e13b4910-b8db-4047-a19d-951cda90ef38"
     static var url: URL? { URL(string: urlString) }

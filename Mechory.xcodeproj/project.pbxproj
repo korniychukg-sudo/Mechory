@@ -40,6 +40,8 @@
 		GI0000000000000000001130 /* ModelHallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = GI0000000000000000000030 /* ModelHallView.swift */; };
 		GI0000000000000000001131 /* RepairContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = GI0000000000000000000031 /* RepairContent.swift */; };
 		GI0000000000000000001132 /* RepairView.swift in Sources */ = {isa = PBXBuildFile; fileRef = GI0000000000000000000032 /* RepairView.swift */; };
+		GI0000000000000000001133 /* CogGatePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = GI0000000000000000000033 /* CogGatePanel.swift */; };
+		GI0000000000000000001134 /* CogLaunchVeil.swift in Sources */ = {isa = PBXBuildFile; fileRef = GI0000000000000000000034 /* CogLaunchVeil.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -78,6 +80,8 @@
 		GI0000000000000000000030 /* ModelHallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelHallView.swift; sourceTree = "<group>"; };
 		GI0000000000000000000031 /* RepairContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepairContent.swift; sourceTree = "<group>"; };
 		GI0000000000000000000032 /* RepairView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepairView.swift; sourceTree = "<group>"; };
+		GI0000000000000000000033 /* CogGatePanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CogGatePanel.swift; sourceTree = "<group>"; };
+		GI0000000000000000000034 /* CogLaunchVeil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CogLaunchVeil.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,6 +136,8 @@
 				GI0000000000000000000030 /* ModelHallView.swift */,
 				GI0000000000000000000031 /* RepairContent.swift */,
 				GI0000000000000000000032 /* RepairView.swift */,
+				GI0000000000000000000033 /* CogGatePanel.swift */,
+				GI0000000000000000000034 /* CogLaunchVeil.swift */,
 				GI0000000000000000000120 /* Assets.xcassets */,
 				GI0000000000000000000121 /* Art */,
 				GI0000000000000000000122 /* Info.plist */,
@@ -242,6 +248,8 @@
 				GI0000000000000000001123 /* CogOnboardingView.swift in Sources */,
 				GI0000000000000000001124 /* CogRootView.swift in Sources */,
 				GI0000000000000000001125 /* CogConfetti.swift in Sources */,
+				GI0000000000000000001133 /* CogGatePanel.swift in Sources */,
+				GI0000000000000000001134 /* CogLaunchVeil.swift in Sources */,
 				GI0000000000000000001126 /* BenchModels.swift in Sources */,
 				GI0000000000000000001127 /* BenchChallenges.swift in Sources */,
 				GI0000000000000000001128 /* BenchView.swift in Sources */,
