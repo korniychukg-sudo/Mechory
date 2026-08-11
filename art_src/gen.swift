@@ -737,64 +737,122 @@ func appIcon(_ path: String) {
     let w = 1024, h = 1024
     let c = ctx(w, h)
     let cs = CGColorSpace(name: CGColorSpace.sRGB)!
-    // Muted navy radial background.
-    let grad = CGGradient(colorsSpace: cs,
-                          colors: [rgb(0.20, 0.28, 0.42), rgb(0.09, 0.13, 0.22)] as CFArray,
-                          locations: [0, 1])!
-    c.drawRadialGradient(grad, startCenter: CGPoint(x: 512, y: 600), startRadius: 0,
-                         endCenter: CGPoint(x: 512, y: 512), endRadius: 800, options: [])
-    // Abstract faceted amber token (not a literal gear).
-    let center = CGPoint(x: 512, y: 512)
-    let R = 300.0
-    let hex = CGMutablePath()
-    for i in 0..<8 {
-        let a = Double(i) * .pi / 4 + .pi / 8
-        let pt = CGPoint(x: center.x + R * cos(a), y: center.y + R * sin(a))
-        if i == 0 { hex.move(to: pt) } else { hex.addLine(to: pt) }
+    let ink = rgb(0.035, 0.063, 0.125)
+
+    // Blueprint backdrop: warm-lit navy with a faint drafting grid and a
+    // vignette so the metal reads bright against it.
+    let bg = CGGradient(colorsSpace: cs,
+                        colors: [rgb(0.176, 0.255, 0.396), rgb(0.075, 0.110, 0.188)] as CFArray,
+                        locations: [0, 1])!
+    c.drawRadialGradient(bg, startCenter: CGPoint(x: 430, y: 640), startRadius: 40,
+                         endCenter: CGPoint(x: 512, y: 512), endRadius: 780, options: [])
+    c.setStrokeColor(rgb(0.427, 0.553, 0.698, 0.07))
+    c.setLineWidth(3)
+    var g = 0.0
+    while g <= 1024 {
+        c.move(to: CGPoint(x: g, y: 0)); c.addLine(to: CGPoint(x: g, y: 1024))
+        c.move(to: CGPoint(x: 0, y: g)); c.addLine(to: CGPoint(x: 1024, y: g))
+        g += 73
     }
-    hex.closeSubpath()
-    let tokenGrad = CGGradient(colorsSpace: cs,
-                               colors: [rgb(0.95, 0.82, 0.51), rgb(0.80, 0.61, 0.26), rgb(0.55, 0.39, 0.13)] as CFArray,
-                               locations: [0, 0.55, 1])!
+    c.strokePath()
+    let vign = CGGradient(colorsSpace: cs,
+                          colors: [rgb(0, 0, 0, 0), rgb(0, 0, 0, 0.42)] as CFArray,
+                          locations: [0.55, 1])!
+    c.drawRadialGradient(vign, startCenter: CGPoint(x: 512, y: 512), startRadius: 200,
+                         endCenter: CGPoint(x: 512, y: 512), endRadius: 760, options: [])
+
+    // Small copper gear, meshed at the lower right.
+    let smallC = CGPoint(x: 840, y: 247)
+    let smallR = 205.0
+    let smallPath = gearPath(center: smallC, teeth: 9, outer: smallR, hub: 0)
     c.saveGState()
-    c.addPath(hex)
-    c.clip()
-    c.drawLinearGradient(tokenGrad, start: CGPoint(x: 300, y: 800), end: CGPoint(x: 750, y: 250), options: [])
+    c.addPath(smallPath); c.clip()
+    let copperGrad = CGGradient(colorsSpace: cs,
+                                colors: [rgb(0.902, 0.647, 0.475), rgb(0.741, 0.459, 0.302),
+                                         rgb(0.482, 0.267, 0.161)] as CFArray,
+                                locations: [0, 0.5, 1])!
+    c.drawLinearGradient(copperGrad, start: CGPoint(x: smallC.x - smallR, y: smallC.y + smallR),
+                         end: CGPoint(x: smallC.x + smallR, y: smallC.y - smallR), options: [])
     c.restoreGState()
-    // Facet lines.
-    c.setStrokeColor(rgb(0.55, 0.39, 0.13, 0.65))
-    c.setLineWidth(7)
-    for i in 0..<8 {
-        let a = Double(i) * .pi / 4 + .pi / 8
-        c.move(to: center)
-        c.addLine(to: CGPoint(x: center.x + R * cos(a), y: center.y + R * sin(a)))
+    c.setStrokeColor(ink); c.setLineWidth(12)
+    c.addPath(smallPath); c.strokePath()
+    c.setFillColor(rgb(0.075, 0.110, 0.188))
+    c.fillEllipse(in: CGRect(x: smallC.x - 58, y: smallC.y - 58, width: 116, height: 116))
+    c.setStrokeColor(ink); c.setLineWidth(11)
+    c.strokeEllipse(in: CGRect(x: smallC.x - 58, y: smallC.y - 58, width: 116, height: 116))
+
+    // Main brass gear.
+    let bigC = CGPoint(x: 465, y: 555)
+    let bigR = 335.0
+    let bigPath = gearPath(center: bigC, teeth: 14, outer: bigR, hub: 0)
+    c.saveGState()
+    c.addPath(bigPath); c.clip()
+    let brassGrad = CGGradient(colorsSpace: cs,
+                               colors: [rgb(0.976, 0.878, 0.596), rgb(0.855, 0.667, 0.290),
+                                        rgb(0.545, 0.388, 0.133)] as CFArray,
+                               locations: [0, 0.48, 1])!
+    c.drawLinearGradient(brassGrad, start: CGPoint(x: bigC.x - bigR, y: bigC.y + bigR),
+                         end: CGPoint(x: bigC.x + bigR, y: bigC.y - bigR), options: [])
+    // Machined rim line.
+    c.setStrokeColor(rgb(0.545, 0.388, 0.133, 0.55))
+    c.setLineWidth(9)
+    c.strokeEllipse(in: CGRect(x: bigC.x - bigR * 0.80, y: bigC.y - bigR * 0.80,
+                               width: bigR * 1.60, height: bigR * 1.60))
+    c.restoreGState()
+    c.setStrokeColor(ink); c.setLineWidth(14)
+    c.addPath(bigPath); c.strokePath()
+
+    // Lightening holes on the web of the big gear.
+    for i in 0..<5 {
+        let a = Double(i) * .pi * 2 / 5 + 0.62
+        let hc = CGPoint(x: bigC.x + 213 * cos(a), y: bigC.y + 213 * sin(a))
+        c.setFillColor(rgb(0.114, 0.161, 0.251))
+        c.fillEllipse(in: CGRect(x: hc.x - 40, y: hc.y - 40, width: 80, height: 80))
+        c.setStrokeColor(ink); c.setLineWidth(8)
+        c.strokeEllipse(in: CGRect(x: hc.x - 40, y: hc.y - 40, width: 80, height: 80))
     }
-    c.strokePath()
-    c.setLineWidth(12)
-    c.setStrokeColor(rgb(0.35, 0.25, 0.09))
-    c.addPath(hex)
-    c.strokePath()
-    // Inner ring accent.
-    c.setStrokeColor(rgb(0.36, 0.61, 0.67, 0.85))
-    c.setLineWidth(10)
-    c.strokeEllipse(in: CGRect(x: center.x - 130, y: center.y - 130, width: 260, height: 260))
-    // Small centre dot.
-    c.setFillColor(rgb(0.95, 0.82, 0.51))
-    c.fillEllipse(in: CGRect(x: center.x - 34, y: center.y - 34, width: 68, height: 68))
-    // Sparkles.
-    for (sx, sy, sr) in [(760.0, 780.0, 22.0), (270.0, 300.0, 15.0), (800.0, 330.0, 12.0)] {
-        let star = CGMutablePath()
-        for i in 0..<8 {
-            let r = i % 2 == 0 ? sr : sr * 0.4
-            let a = Double(i) * .pi / 4
-            let pt = CGPoint(x: sx + r * cos(a), y: sy + r * sin(a))
-            if i == 0 { star.move(to: pt) } else { star.addLine(to: pt) }
-        }
-        star.closeSubpath()
-        c.setFillColor(rgb(0.96, 0.90, 0.72, 0.9))
-        c.addPath(star)
-        c.fillPath()
-    }
+
+    // The window into the works: a cut-out hub showing a teal gear turning
+    // inside — the whole point of the app, in one shape.
+    let winR = 132.0
+    c.setFillColor(rgb(0.055, 0.086, 0.153))
+    c.fillEllipse(in: CGRect(x: bigC.x - winR, y: bigC.y - winR, width: winR * 2, height: winR * 2))
+    c.saveGState()
+    c.addEllipse(in: CGRect(x: bigC.x - winR, y: bigC.y - winR, width: winR * 2, height: winR * 2))
+    c.clip()
+    let innerPath = gearPath(center: bigC, teeth: 8, outer: 102, hub: 0)
+    c.addPath(innerPath)
+    c.clip()
+    let tealGrad = CGGradient(colorsSpace: cs,
+                              colors: [rgb(0.514, 0.792, 0.847), rgb(0.196, 0.475, 0.545)] as CFArray,
+                              locations: [0, 1])!
+    c.drawLinearGradient(tealGrad, start: CGPoint(x: bigC.x - 102, y: bigC.y + 102),
+                         end: CGPoint(x: bigC.x + 102, y: bigC.y - 102), options: [])
+    c.restoreGState()
+    c.setStrokeColor(ink); c.setLineWidth(10)
+    c.addPath(innerPath); c.strokePath()
+    c.setFillColor(rgb(0.941, 0.765, 0.306))
+    c.fillEllipse(in: CGRect(x: bigC.x - 30, y: bigC.y - 30, width: 60, height: 60))
+    c.setStrokeColor(ink); c.setLineWidth(9)
+    c.strokeEllipse(in: CGRect(x: bigC.x - 30, y: bigC.y - 30, width: 60, height: 60))
+    // Bezel around the window.
+    c.setStrokeColor(rgb(0.545, 0.388, 0.133))
+    c.setLineWidth(16)
+    c.strokeEllipse(in: CGRect(x: bigC.x - winR, y: bigC.y - winR, width: winR * 2, height: winR * 2))
+    c.setStrokeColor(ink); c.setLineWidth(9)
+    c.strokeEllipse(in: CGRect(x: bigC.x - winR - 8, y: bigC.y - winR - 8,
+                               width: winR * 2 + 16, height: winR * 2 + 16))
+
+    // Warm highlight sweep across the upper-left of the brass.
+    c.saveGState()
+    c.addPath(bigPath); c.clip()
+    let shine = CGGradient(colorsSpace: cs,
+                           colors: [rgb(1, 1, 1, 0.30), rgb(1, 1, 1, 0)] as CFArray,
+                           locations: [0, 1])!
+    c.drawLinearGradient(shine, start: CGPoint(x: bigC.x - 300, y: bigC.y + 300),
+                         end: CGPoint(x: bigC.x + 40, y: bigC.y - 40), options: [])
+    c.restoreGState()
+
     save(c, path)
 }
 
